@@ -1,6 +1,3 @@
-/**
- * @author Daylen Mathews & Haylee Staub
- */
 package fa.dfa;
 
 import java.util.HashMap;
@@ -9,10 +6,13 @@ import java.util.Set;
 
 import fa.State;
 
+/**
+ * @author Daylen Mathews & Haylee Staub
+ */
 public class DFA implements DFAInterface{
 
     HashSet Q;
-    HashSet sigma;
+    Set sigma;
     HashMap delta;
     String finalState;
     String startState;
@@ -75,8 +75,7 @@ public class DFA implements DFAInterface{
     @Override
     public Set<Character> getSigma() 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSigma'");
+        return sigma;
     }
 
     @Override
@@ -89,15 +88,21 @@ public class DFA implements DFAInterface{
     @Override
     public boolean isFinal(String name) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isFinal'");
+        if (name.equals(finalState)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean isStart(String name) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isStart'");
+        if (name.equals(startState)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
