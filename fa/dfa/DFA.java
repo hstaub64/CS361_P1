@@ -2,6 +2,8 @@ package fa.dfa;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import fa.State;
@@ -11,27 +13,30 @@ import fa.State;
  */
 public class DFA implements DFAInterface{
 
-    HashSet Q;
+    // may have to update the instance variables to match 5 tuple
+    LinkedHashSet Q;
     Set sigma;
-    HashMap delta;
-    String finalState;
-    String startState;
+    LinkedHashMap delta;
+    DFAState finalState;
+    DFAState startState;
 
     public DFA ()
     {
-        Q = new HashSet<>();
-        sigma = new HashSet<>(); 
-        delta = new HashMap<>();
-        finalState = "";
-        startState = "";
+        Q = new LinkedHashSet<DFAState>();
+        sigma = new HashSet<Character>(); 
+        delta = new LinkedHashMap<>();
+        finalState = new DFAState("");
+        startState = new DFAState("");
     }
 
     @Override
     public boolean addState(String name) 
     {
+        // will have to adjust Q.contains to look for state objects and not strings
         if (!(Q.contains(name))) {
-              Q.add(name);
-              return true;
+            DFAState newState = new DFAState(name);
+            Q.add(newState);
+            return true;
         } else {
             return false;
         }
@@ -40,8 +45,9 @@ public class DFA implements DFAInterface{
     @Override
     public boolean setFinal(String name) 
     {
+        // will have to adjust Q.contains to look for state objects and not strings
         if (Q.contains(name)) {
-            finalState = name;
+            finalState.setName(name);
             return true;
         } else {
             return false;
@@ -51,8 +57,9 @@ public class DFA implements DFAInterface{
     @Override
     public boolean setStart(String name) 
     {
+        // will have to adjust Q.contains to look for state objects and not strings
         if (Q.contains(name)) {
-            startState = name;
+            startState.setName(name);
             return true;
         } else {
             return false;
@@ -62,7 +69,7 @@ public class DFA implements DFAInterface{
     @Override
     public void addSigma(char symbol) 
     {
-        Q.add(symbol);
+        sigma.add(symbol);
     }
 
     @Override
@@ -81,14 +88,14 @@ public class DFA implements DFAInterface{
     @Override
     public State getState(String name) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getState'");
+        // return the state in Q that has the name that matches the given name
+        //return Q.contains();
     }
 
     @Override
     public boolean isFinal(String name) 
     {
-        if (name.equals(finalState)) {
+        if (name.equals(finalState.name)) {
             return true;
         } else {
             return false;
@@ -98,7 +105,7 @@ public class DFA implements DFAInterface{
     @Override
     public boolean isStart(String name) 
     {
-        if (name.equals(startState)) {
+        if (name.equals(startState.name)) {
             return true;
         } else {
             return false;
