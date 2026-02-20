@@ -19,7 +19,7 @@ public class DFA implements DFAInterface{
     Set<DFAState> finalState; // F
     Set<DFAState> startState; // q0
 
-    public DFA ()
+    public DFA()
     {
         Q = new LinkedHashSet<DFAState>();
         sigma = new HashSet<Character>(); 
@@ -28,6 +28,7 @@ public class DFA implements DFAInterface{
         startState = new HashSet<>();
     }
 
+     
     @Override
     public boolean addState(String name) 
     {
@@ -41,7 +42,14 @@ public class DFA implements DFAInterface{
             }
         }
 
-        return exists;
+        if (exists == false) 
+        {
+            Q.add(new DFAState(name));
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
     @Override
@@ -83,8 +91,7 @@ public class DFA implements DFAInterface{
     @Override
     public boolean accepts(String s) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'accepts'");
+       return false; // replace later
     }
 
     @Override
@@ -141,15 +148,27 @@ public class DFA implements DFAInterface{
     @Override
     public boolean addTransition(String fromState, String toState, char onSymb) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addTransition'");
+        State stateFrom = getState(fromState);
+        State stateTo = getState(toState);
+
+        if (stateFrom == null || stateTo == null) 
+        {
+            return false;
+        }
+
+        if (!sigma.contains(onSymb)) 
+        {
+            return false;
+        }
+
+        // actual transition logic 
+        return true;
     }
 
     @Override
     public DFA swap(char symb1, char symb2) 
     {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'swap'");
+        return null; // replace later
     }
     
 }
