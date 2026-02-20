@@ -1,6 +1,5 @@
 package fa.dfa;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,57 +12,66 @@ import fa.State;
  */
 public class DFA implements DFAInterface{
 
-    // may have to update the instance variables to match 5 tuple
-    LinkedHashSet Q;
-    Set sigma;
-    LinkedHashMap delta;
-    DFAState finalState;
-    DFAState startState;
+    // idea to use LinkedHashSet from classmate Amy
+    LinkedHashSet<DFAState> Q; // Q
+    Set<Character> sigma; // Sigma
+    LinkedHashMap<DFAState, Character> delta; // Delta
+    Set<DFAState> finalState; // F
+    Set<DFAState> startState; // q0
 
     public DFA ()
     {
         Q = new LinkedHashSet<DFAState>();
         sigma = new HashSet<Character>(); 
         delta = new LinkedHashMap<>();
-        finalState = new DFAState("");
-        startState = new DFAState("");
+        finalState = new HashSet<>(); // these may not have to be hash sets
+        startState = new HashSet<>();
     }
 
     @Override
     public boolean addState(String name) 
     {
-        // will have to adjust Q.contains to look for state objects and not strings
-        if (!(Q.contains(name))) {
-            DFAState newState = new DFAState(name);
-            Q.add(newState);
-            return true;
-        } else {
-            return false;
+        boolean exists = false;
+
+        for (DFAState state : Q) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                exists = true;
+            }
         }
+
+        return exists;
     }
 
     @Override
     public boolean setFinal(String name) 
     {
-        // will have to adjust Q.contains to look for state objects and not strings
-        if (Q.contains(name)) {
-            finalState.setName(name);
-            return true;
-        } else {
-            return false;
+        for (DFAState state : Q) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                finalState.add(state);
+                return true;
+            }
         }
+
+        return false;
     }
 
     @Override
     public boolean setStart(String name) 
     {
-        // will have to adjust Q.contains to look for state objects and not strings
-        if (Q.contains(name)) {
-            startState.setName(name);
-            return true;
-        } else {
-            return false;
+        for (DFAState state : Q) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                startState.add(state);
+                return true;
+            }
         }
+
+        return false;
     }
 
     @Override
@@ -88,28 +96,46 @@ public class DFA implements DFAInterface{
     @Override
     public State getState(String name) 
     {
-        // return the state in Q that has the name that matches the given name
-        //return Q.contains();
+        for (DFAState state : Q) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                return state;
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean isFinal(String name) 
     {
-        if (name.equals(finalState.name)) {
-            return true;
-        } else {
-            return false;
+        boolean exists = false;
+
+        for (DFAState state : finalState) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                exists = true;
+            }
         }
+
+        return exists;
     }
 
     @Override
     public boolean isStart(String name) 
     {
-        if (name.equals(startState.name)) {
-            return true;
-        } else {
-            return false;
+        boolean exists = false;
+
+        for (DFAState state : startState) 
+        {
+            if (state.getName().equals(name)) 
+            {
+                exists = true;
+            }
         }
+
+        return exists;
     }
 
     @Override
