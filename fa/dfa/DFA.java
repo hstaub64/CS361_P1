@@ -17,7 +17,7 @@ public class DFA implements DFAInterface{
     Set<Character> sigma; // Sigma
     LinkedHashMap<DFAState, Character> delta; // Delta
     Set<DFAState> finalState; // F
-    Set<DFAState> startState; // q0
+    DFAState startState; // q0
 
     public DFA()
     {
@@ -25,7 +25,7 @@ public class DFA implements DFAInterface{
         sigma = new HashSet<Character>(); 
         delta = new LinkedHashMap<>();
         finalState = new HashSet<>(); // these may not have to be hash sets
-        startState = new HashSet<>();
+        startState = new DFAState(null);
     }
 
      
@@ -74,7 +74,7 @@ public class DFA implements DFAInterface{
         {
             if (state.getName().equals(name)) 
             {
-                startState.add(state);
+                startState = state;
                 return true;
             }
         }
@@ -91,7 +91,32 @@ public class DFA implements DFAInterface{
     @Override
     public boolean accepts(String s) 
     {
-       return false; // replace later
+        // turn string into array of char
+        char[] sArray = s.toCharArray();
+        DFAState currentState = startState;
+        // iterate through entire array of char
+        for (char c : sArray) 
+        {
+            if (!sigma.contains(c)) 
+            {
+                return false;
+            }
+
+            if (currentState.transitions.get(c) == null) 
+            {
+                return false;
+            }
+
+            currentState = currentState.transitions.get(c);
+        }
+       
+        if (isFinal(currentState.getName())) 
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
     }
 
     @Override
@@ -134,12 +159,9 @@ public class DFA implements DFAInterface{
     {
         boolean exists = false;
 
-        for (DFAState state : startState) 
+        if (startState.getName().equals(name)) 
         {
-            if (state.getName().equals(name)) 
-            {
-                exists = true;
-            }
+            exists = true;
         }
 
         return exists;
@@ -148,8 +170,8 @@ public class DFA implements DFAInterface{
     @Override
     public boolean addTransition(String fromState, String toState, char onSymb) 
     {
-        State stateFrom = getState(fromState);
-        State stateTo = getState(toState);
+        DFAState stateFrom = (DFAState) getState(fromState);
+        DFAState stateTo = (DFAState) getState(toState);
 
         if (stateFrom == null || stateTo == null) 
         {
@@ -162,13 +184,32 @@ public class DFA implements DFAInterface{
         }
 
         // actual transition logic 
+        stateFrom.transitions.put(onSymb, stateTo);
         return true;
     }
 
     @Override
     public DFA swap(char symb1, char symb2) 
     {
+        // go through each state in q, swap their transition keys
         return null; // replace later
+    }
+
+    public String toString()
+    {
+        // update return string
+        String returnsString = "";
+        returnsString += " Q = " + Q.toString() + "\n"
+                + "Sigma = " + sigma.toString() + "\n"
+				+ "delta =\n"
+				+ "		0	1\n"
+				+ "	a	a	b\n"
+				+ "	b	a	b\n"
+				+ "q0 = a\n"
+				+ "F = { b }";
+
+
+        return returnsString;
     }
     
 }
