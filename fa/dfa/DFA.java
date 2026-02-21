@@ -15,7 +15,7 @@ public class DFA implements DFAInterface{
     // idea to use LinkedHashSet from classmate Amy
     LinkedHashSet<DFAState> Q; // Q
     Set<Character> sigma; // Sigma
-    LinkedHashMap<DFAState, Character> delta; // Delta
+    // LinkedHashMap<DFAState, Character> delta; // Delta
     Set<DFAState> finalState; // F
     DFAState startState; // q0
 
@@ -23,7 +23,7 @@ public class DFA implements DFAInterface{
     {
         Q = new LinkedHashSet<DFAState>();
         sigma = new HashSet<Character>(); 
-        delta = new LinkedHashMap<>();
+        // delta = new LinkedHashMap<>(); this may be unnecessary with the transitions in DFAState
         finalState = new HashSet<>(); // these may not have to be hash sets
         startState = new DFAState(null);
     }
@@ -191,23 +191,85 @@ public class DFA implements DFAInterface{
     @Override
     public DFA swap(char symb1, char symb2) 
     {
-        // go through each state in q, swap their transition keys
-        return null; // replace later
+        DFA newDFA = new DFA();
+        newDFA.Q = Q;
+        newDFA.sigma = sigma;
+        newDFA.finalState = finalState;
+        newDFA.startState = startState;
+
+        for (DFAState state : newDFA.Q) 
+        {
+            DFAState prevSwapOne = state.transitions.get(symb1);
+            DFAState prevSwapTwo = state.transitions.get(symb2);
+
+            // first swap
+            state.transitions.remove(prevSwapOne, symb1);
+            addTransition(state.getName(), prevSwapOne.getName(), symb2);
+
+            // second swap
+            state.transitions.remove(prevSwapTwo, symb2);
+            addTransition(state.getName(), prevSwapTwo.getName(), symb1);
+        }
+
+        return newDFA;
+    }
+
+    private String sigmaToString(Set<Character> sigma)
+    {
+        String retVal = "";
+
+        for (Character c : sigma) 
+        {
+            retVal += Character.toString(c) + " ";
+        }
+
+        return retVal;
     }
 
     public String toString()
     {
-        // update return string
-        String returnsString = "";
-        returnsString += " Q = " + Q.toString() + "\n"
-                + "Sigma = " + sigma.toString() + "\n"
-				+ "delta =\n"
-				+ "		0	1\n"
-				+ "	a	a	b\n"
-				+ "	b	a	b\n"
-				+ "q0 = a\n"
-				+ "F = { b }";
+        // lots of copy paste, could simplify using private methods
 
+        // String for Q
+        String returnsString = "";
+        returnsString += "Q = {";
+
+        for (DFAState state : Q) 
+        {
+            returnsString += state.getName() + " ";
+        }
+
+        returnsString += "}\n";
+
+        // String for sigma
+        returnsString += "Sigma = {" + sigmaToString(sigma) + "}\n";
+
+        // String for delta
+        returnsString += "delta =\n" + sigmaToString(sigma) + "\n";
+
+        for (DFAState state : Q) 
+        {
+            returnsString += state.getName() + " ";
+
+            for (Character c : sigma) 
+            {
+                returnsString += state.transitions.get(c) + " ";
+            }
+            returnsString += "\n";
+        }
+
+        // String for q0
+        returnsString += "q0 = " + startState.getName() + "\n";
+
+        // string for F
+        returnsString += "F = {";
+
+        for (DFAState state : finalState) 
+        {
+            returnsString += state.getName() + " ";
+        }
+
+        returnsString += "}";
 
         return returnsString;
     }
