@@ -1,29 +1,30 @@
 package fa.dfa;
 
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import fa.State;
 
 /**
+ * Class for constructing a DFA, including four parts of the 5-tuple:
+ * Q as a set of states, sigma as a set of characters for the alphabet,
+ * F as a set of final states, and q0 as a start state.
+ * 
  * @author Daylen Mathews & Haylee Staub
  */
 public class DFA implements DFAInterface{
 
     // idea to use LinkedHashSet from classmate Amy
     LinkedHashSet<DFAState> Q; // Q
-    Set<Character> sigma; // Sigma
-    // LinkedHashMap<DFAState, Character> delta; // Delta
+    LinkedHashSet<Character> sigma; // Sigma
     Set<DFAState> finalState; // F
     DFAState startState; // q0
 
     public DFA()
     {
         Q = new LinkedHashSet<DFAState>();
-        sigma = new HashSet<Character>(); 
-        // delta = new LinkedHashMap<>(); this may be unnecessary with the transitions in DFAState
+        sigma = new LinkedHashSet<Character>(); 
         finalState = new HashSet<>(); // these may not have to be hash sets
         startState = new DFAState(null);
     }
@@ -192,38 +193,45 @@ public class DFA implements DFAInterface{
     public DFA swap(char symb1, char symb2) 
     {
         DFA newDFA = new DFA();
-        newDFA.Q = Q;
-        newDFA.sigma = sigma;
-        newDFA.finalState = finalState;
-        newDFA.startState = startState;
 
-        for (DFAState state : newDFA.Q) 
+        // copy all the states
+        for (DFAState state : this.Q) 
         {
-            DFAState prevSwapOne = state.transitions.get(symb1);
-            DFAState prevSwapTwo = state.transitions.get(symb2);
-
-            // first swap
-            state.transitions.remove(prevSwapOne, symb1);
-            addTransition(state.getName(), prevSwapOne.getName(), symb2);
-
-            // second swap
-            state.transitions.remove(prevSwapTwo, symb2);
-            addTransition(state.getName(), prevSwapTwo.getName(), symb1);
+            newDFA.addState(state.getName());
         }
+
+        // copy all character in sigma
+        for (Character c : this.sigma) 
+        {
+            newDFA.addSigma(c);
+        }
+
+        // copy and swap all transitions
+        for (DFAState state : this.Q) 
+        {
+            for (Character key : state.transitions.keySet()) 
+            {
+                if (key.equals(symb1))
+                {
+                    newDFA.addTransition(state.getName(), state.transitions.get(key).getName(), symb2);
+                } else if (key.equals(symb2)) 
+                {
+                    newDFA.addTransition(state.getName(), state.transitions.get(key).getName(), symb1);
+                }
+                
+            }
+        }
+
+        // copy all final states
+        for (DFAState state : this.finalState) 
+        {
+            newDFA.setFinal(state.getName());
+        }
+
+        // copy the start state
+        newDFA.setStart(this.startState.getName());
 
         return newDFA;
-    }
-
-    private String sigmaToString(Set<Character> sigma)
-    {
-        String retVal = "";
-
-        for (Character c : sigma) 
-        {
-            retVal += Character.toString(c) + " ";
-        }
-
-        return retVal;
     }
 
     public String toString()
@@ -272,6 +280,26 @@ public class DFA implements DFAInterface{
         returnsString += "}";
 
         return returnsString;
+    }
+
+    /**
+     * Private helper method to convert the Sigma set
+     * to a string 
+     * 
+     * @param sigma to convert to string
+     * @return a string representation of the characters
+     * in sigma
+     */
+    private String sigmaToString(Set<Character> sigma)
+    {
+        String retVal = "";
+
+        for (Character c : sigma) 
+        {
+            retVal += Character.toString(c) + " ";
+        }
+
+        return retVal;
     }
     
 }
